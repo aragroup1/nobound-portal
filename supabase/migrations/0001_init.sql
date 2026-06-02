@@ -55,6 +55,7 @@ create table if not exists tickets (
   client_id uuid not null references clients(id) on delete cascade,
   title text not null,
   description text not null,
+  type text not null default 'modification' check (type in ('modification', 'emergency')),
   status text not null default 'new' check (status in (
     'new', 'priced', 'awaiting_payment', 'paid', 'in_progress', 'complete', 'declined', 'cancelled'
   )),

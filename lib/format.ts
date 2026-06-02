@@ -25,6 +25,11 @@ export function formatDateTime(value: string | Date | null | undefined) {
   });
 }
 
+export const TICKET_TYPE_LABEL: Record<string, string> = {
+  modification: "Modification",
+  emergency: "Emergency",
+};
+
 export const TICKET_STATUS_LABEL: Record<string, string> = {
   new: "New",
   priced: "Priced",

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
-import { TicketStatusBadge } from "@/components/shared/status-badge";
+import { TicketStatusBadge, TicketTypeBadge } from "@/components/shared/status-badge";
 import {
   Table,
   TableBody,
@@ -23,15 +23,17 @@ export default async function AdminTicketsPage() {
     .order("created_at", { ascending: false });
 
   const list = (tickets ?? []) as TicketWithClient[];
-  const open = list.filter((t) => !["complete", "cancelled", "declined"].includes(t.status));
+  const emergencies = list.filter((t) => t.type === "emergency" && !["complete", "cancelled", "declined"].includes(t.status));
+  const open = list.filter((t) => t.type !== "emergency" && !["complete", "cancelled", "declined"].includes(t.status));
   const closed = list.filter((t) => ["complete", "cancelled", "declined"].includes(t.status));
 
   return (
     <>
       <PageHeader
         title="Tickets"
-        description={`${open.length} open · ${closed.length} closed`}
+        description={`${emergencies.length} emergencies · ${open.length} open · ${closed.length} closed`}
       />
+      {emergencies.length > 0 && <Section title="🚨 Emergencies" tickets={emergencies} />}
       <Section title="Open" tickets={open} />
       <Section title="Closed" tickets={closed} muted />
     </>
@@ -58,6 +60,7 @@ function Section({
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Client</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Price</TableHead>
@@ -75,6 +78,7 @@ function Section({
                     {t.description}
                   </div>
                 </TableCell>
+                <TableCell><TicketTypeBadge type={t.type} /></TableCell>
                 <TableCell className="text-sm">
                   {t.clients?.name}
                   <div className="text-xs text-muted-foreground">{t.clients?.email}</div>
@@ -88,7 +92,7 @@ function Section({
             ))}
             {tickets.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="py-10 text-center text-muted-foreground text-sm">
+                <TableCell colSpan={6} className="py-10 text-center text-muted-foreground text-sm">
                   Nothing here.
                 </TableCell>
               </TableRow>

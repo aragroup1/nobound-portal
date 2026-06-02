@@ -11,6 +11,8 @@ export type SubscriptionStatus =
   | "unpaid"
   | "canceled";
 
+export type TicketType = "modification" | "emergency";
+
 export type TicketStatus =
   | "new"
   | "priced"
@@ -66,6 +68,7 @@ export interface Ticket {
   client_id: string;
   title: string;
   description: string;
+  type: TicketType;
   status: TicketStatus;
   price_pence: number | null;
   admin_notes: string | null;

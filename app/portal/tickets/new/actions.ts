@@ -11,6 +11,7 @@ import { TicketNewAdminEmail } from "@/emails/ticket-new-admin";
 const schema = z.object({
   title: z.string().min(3, "Add a short title.").max(120),
   description: z.string().min(10, "A little more detail, please."),
+  type: z.enum(["modification", "emergency"]).default("modification"),
 });
 
 export type RaiseState = { ok: boolean; message?: string; fieldErrors?: Record<string, string> };
@@ -20,6 +21,7 @@ export async function raiseTicket(_prev: RaiseState, formData: FormData): Promis
   const parsed = schema.safeParse({
     title: formData.get("title"),
     description: formData.get("description"),
+    type: formData.get("type") || "modification",
   });
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -41,20 +43,25 @@ export async function raiseTicket(_prev: RaiseState, formData: FormData): Promis
       client_id: client.id,
       title: parsed.data.title,
       description: parsed.data.description,
+      type: parsed.data.type,
       status: "new",
     })
     .select("id")
     .single();
   if (error || !ticket) return { ok: false, message: error?.message ?? "Failed to raise." };
 
+  const isEmergency = parsed.data.type === "emergency";
   try {
     await sendEmail({
       to: ADMIN_EMAIL,
-      subject: `New change request from ${client.name}`,
+      subject: isEmergency
+        ? `🚨 EMERGENCY ticket from ${client.name} — ${parsed.data.title}`
+        : `New change request from ${client.name}`,
       react: TicketNewAdminEmail({
         clientName: client.name,
         title: parsed.data.title,
         description: parsed.data.description,
+        type: parsed.data.type,
         ticketUrl: appUrl(`/admin/tickets/${ticket.id}`),
       }),
     });

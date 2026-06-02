@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
-import { TicketStatusBadge } from "@/components/shared/status-badge";
+import { TicketStatusBadge, TicketTypeBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +58,10 @@ export default async function AdminTicketDetail({
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader className="flex flex-row items-start justify-between gap-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Request</CardTitle>
+              <div className="space-y-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Request</CardTitle>
+                <TicketTypeBadge type={t.type} />
+              </div>
               <TicketStatusBadge status={t.status} />
             </CardHeader>
             <CardContent>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireClient } from "@/lib/auth";
 import { PageHeader } from "@/components/shared/page-header";
-import { TicketStatusBadge } from "@/components/shared/status-badge";
+import { TicketStatusBadge, TicketTypeBadge } from "@/components/shared/status-badge";
 import { LinkButton } from "@/components/ui/link-button";
 import { formatDateTime, formatGBP } from "@/lib/format";
 import { Plus } from "lucide-react";
@@ -52,6 +52,7 @@ export default async function PortalTicketsPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3 shrink-0">
+                <TicketTypeBadge type={t.type} />
                 <span className="font-mono text-sm">{formatGBP(t.price_pence)}</span>
                 <TicketStatusBadge status={t.status} />
               </div>
