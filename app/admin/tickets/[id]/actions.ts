@@ -51,6 +51,7 @@ export async function sendForPayment(formData: FormData) {
   const client = (ticket as { clients: { name: string; email: string; stripe_customer_id: string | null } | null }).clients;
   if (!client?.stripe_customer_id) throw new Error("Client has no Stripe customer.");
 
+  const onboardingCoupon = process.env.STRIPE_ONBOARDING_COUPON_ID;
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     customer: client.stripe_customer_id,
@@ -70,6 +71,7 @@ export async function sendForPayment(formData: FormData) {
     success_url: appUrl(`/portal/pay/success?ticket=${ticket.id}`),
     cancel_url: appUrl(`/portal/tickets/${ticket.id}?cancelled=1`),
     metadata: { ticket_id: ticket.id, kind: "ticket" },
+    ...(onboardingCoupon ? { discounts: [{ coupon: onboardingCoupon }] } : {}),
   });
 
   await admin
