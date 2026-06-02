@@ -108,6 +108,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
   if (data.has_hosting) lineItems.push({ price: STRIPE_PRICE_HOSTING, quantity: 1 });
   if (data.has_seo) lineItems.push({ price: STRIPE_PRICE_SEO, quantity: 1 });
 
+  const onboardingCoupon = process.env.STRIPE_ONBOARDING_COUPON_ID;
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customer.id,
@@ -116,6 +117,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
     cancel_url: appUrl("/portal?cancelled=1"),
     subscription_data: { metadata: { client_id: clientRow.id } },
     metadata: { client_id: clientRow.id, kind: "subscription" },
+    ...(onboardingCoupon ? { discounts: [{ coupon: onboardingCoupon }] } : {}),
   });
 
   try {
