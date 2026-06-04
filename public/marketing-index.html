@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#05020d" />
+  <title>NoBound.Design — Web design, ecommerce growth & SEO</title>
+  <meta name="description" content="NoBound.Design is a creative web agency. We design premium websites, scale ecommerce, and engineer SEO for ambitious brands." />
+  <meta property="og:title" content="NoBound.Design" />
+  <meta property="og:description" content="A creative web agency for web design, ecommerce growth, and SEO." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" href="/nbLogo.png" />
+  <link rel="preload" as="image" href="/nbLogo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/marketing-styles.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a href="#hero" class="brand" aria-label="NoBound home">
+        <img src="/nbLogo.png" alt="NoBound" width="140" height="34" />
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">What we do</a>
+        <a href="#testimonials">Clients</a>
+        <a href="/login">Client Sign in</a>
+        <a href="#contact" class="nav-cta">Contact Us</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero" class="hero">
+    <canvas id="shaderCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-fallback" aria-hidden="true"></div>
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <div class="badge hero-fade-up">
+        <span class="badge-dot"></span>
+        <span>A creative web agency</span>
+      </div>
+
+      <h1>
+        <span class="line-1 hero-fade-up delay-1">No Boundaries.</span>
+        <span class="line-2 hero-fade-up delay-2">To your design, growth, and discovery.</span>
+      </h1>
+
+      <p class="lede hero-fade-up delay-3">
+        We build web experiences, scale ecommerce, and engineer SEO for ambitious brands ready to leave orbit.
+      </p>
+
+      <div class="hero-actions hero-fade-up delay-4">
+        <a href="#contact" class="btn btn-primary">Contact Us</a>
+        <a href="#features" class="btn btn-ghost">What We Do</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">What we do</span>
+        <h2>Three disciplines. One trajectory.</h2>
+        <p>A full-stack creative team for brands that treat the web as their most important storefront.</p>
+      </div>
+
+      <div class="features-grid">
+        <article class="feature-card reveal">
+          <svg class="feature-planet" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <radialGradient id="p1" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#d9bbff"/>
+                <stop offset="55%" stop-color="#a855f7"/>
+                <stop offset="100%" stop-color="#4a1d7a"/>
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="30" fill="url(#p1)"/>
+            <ellipse cx="50" cy="50" rx="46" ry="9" stroke="#c4a7f0" stroke-width="1.5" opacity="0.8"/>
+            <ellipse cx="50" cy="50" rx="42" ry="7" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+          </svg>
+          <h3>Web Design</h3>
+          <p class="tagline">Interfaces engineered for wonder.</p>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>Bespoke UI/UX, designed in-house</span></li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>Motion design &amp; micro-interactions</span></li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>CMS-ready builds your team can edit</span></li>
+          </ul>
+        </article>
+
+        <article class="feature-card reveal">
+          <svg class="feature-planet" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <radialGradient id="p2" cx="38%" cy="32%" r="70%">
+                <stop offset="0%" stop-color="#f0d6ff"/>
+                <stop offset="45%" stop-color="#8054b1"/>
+                <stop offset="100%" stop-color="#2a0f4d"/>
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="52" r="34" fill="url(#p2)"/>
+            <circle cx="42" cy="46" r="5" fill="#c4a7f0" opacity="0.45"/>
+            <circle cx="60" cy="58" r="3" fill="#e9d9ff" opacity="0.4"/>
+            <circle cx="56" cy="40" r="2" fill="#c4a7f0" opacity="0.5"/>
+          </svg>
+          <h3>Ecommerce Growth</h3>
+          <p class="tagline">Stores that compound revenue.</p>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>Shopify &amp; WooCommerce builds</span></li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>CRO audits &amp; checkout tuning</span></li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>Funnel &amp; lifecycle optimisation</span></li>
+          </ul>
+        </article>
+
+        <article class="feature-card reveal">
+          <svg class="feature-planet" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <radialGradient id="p3" cx="40%" cy="35%" r="60%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="30%" stop-color="#c4a7f0"/>
+                <stop offset="100%" stop-color="#5b21b6"/>
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="30" fill="url(#p3)"/>
+            <path d="M22 46 Q50 36 78 46" stroke="#e9d9ff" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <path d="M22 54 Q50 64 78 54" stroke="#a855f7" stroke-width="1.5" fill="none" opacity="0.55"/>
+            <circle cx="82" cy="24" r="2" fill="#fff" opacity="0.85"/>
+            <circle cx="18" cy="74" r="1.5" fill="#fff" opacity="0.7"/>
+          </svg>
+          <h3>SEO</h3>
+          <p class="tagline">Signals the algorithm respects.</p>
+          <ul>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>Technical SEO &amp; Core Web Vitals</span></li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>Content architecture &amp; topical maps</span></li>
+            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"/></svg><span>Link strategy &amp; digital PR</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Clients</span>
+        <h2>Trusted by founders who ship.</h2>
+        <p>A selection of words from the brands we have launched, scaled, and ranked.</p>
+      </div>
+    </div>
+
+    <div class="marquee">
+      <div class="marquee-track">
+        <!-- Row 1 cards -->
+        <article class="t-card">
+          <div class="t-stars" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"They rebuilt our site from the atoms up. Conversion on the PDP lifted 34% in the first quarter after launch."</p>
+          <div class="t-meta"><div class="t-avatar">MO</div><div><div class="t-name">Maya Okafor</div><div class="t-role">Founder, Lumen Skincare</div></div></div>
+        </article>
+        <article class="t-card">
+          <div class="t-stars" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Four months of SEO work and we're now ranking page one for queries we couldn't touch before. Worth every penny."</p>
+          <div class="t-meta"><div class="t-avatar">DR</div><div><div class="t-name">Daniel Reyes</div><div class="t-role">Head of Growth, NorthForge Outdoors</div></div></div>
+        </article>
+        <article class="t-card">
+          <div class="t-stars" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Beautiful strategists who also happen to write great code. Our brand finally has a site that matches how premium we feel."</p>
+          <div class="t-meta"><div class="t-avatar">PS</div><div><div class="t-name">Priya Shah</div><div class="t-role">CMO, Verdant Tea Co.</div></div></div>
+        </article>
+        <article class="t-card">
+          <div class="t-stars" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"They shaved two seconds off our LCP and then redesigned the dashboard on top of it. Rare combination of taste and engineering."</p>
+          <div class="t-meta"><div class="t-avatar">JK</div><div><div class="t-name">Jonas Keller</div><div class="t-role">CTO, Orbit Analytics</div></div></div>
+        </article>
+        <!-- Duplicate for seamless loop -->
+        <article class="t-card" aria-hidden="true">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"They rebuilt our site from the atoms up. Conversion on the PDP lifted 34% in the first quarter after launch."</p>
+          <div class="t-meta"><div class="t-avatar">MO</div><div><div class="t-name">Maya Okafor</div><div class="t-role">Founder, Lumen Skincare</div></div></div>
+        </article>
+        <article class="t-card" aria-hidden="true">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Four months of SEO work and we're now ranking page one for queries we couldn't touch before. Worth every penny."</p>
+          <div class="t-meta"><div class="t-avatar">DR</div><div><div class="t-name">Daniel Reyes</div><div class="t-role">Head of Growth, NorthForge Outdoors</div></div></div>
+        </article>
+        <article class="t-card" aria-hidden="true">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Beautiful strategists who also happen to write great code. Our brand finally has a site that matches how premium we feel."</p>
+          <div class="t-meta"><div class="t-avatar">PS</div><div><div class="t-name">Priya Shah</div><div class="t-role">CMO, Verdant Tea Co.</div></div></div>
+        </article>
+        <article class="t-card" aria-hidden="true">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"They shaved two seconds off our LCP and then redesigned the dashboard on top of it. Rare combination of taste and engineering."</p>
+          <div class="t-meta"><div class="t-avatar">JK</div><div><div class="t-name">Jonas Keller</div><div class="t-role">CTO, Orbit Analytics</div></div></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="marquee marquee-reverse">
+      <div class="marquee-track">
+        <article class="t-card">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"A tiny team that punches like an agency three times its size. The mockups alone sold our board on the rebrand."</p>
+          <div class="t-meta"><div class="t-avatar">SM</div><div><div class="t-name">Sofia Marín</div><div class="t-role">Director, Atrium Studio</div></div></div>
+        </article>
+        <article class="t-card">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Our subscription flow went from leaky to airtight. Revenue per visitor is up, and we finally look like the brand we wanted to be."</p>
+          <div class="t-meta"><div class="t-avatar">LT</div><div><div class="t-name">Leo Tanaka</div><div class="t-role">Owner, Kōki Coffee Roasters</div></div></div>
+        </article>
+        <article class="t-card">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Organic traffic tripled in 8 months. They are the only agency we've used that genuinely understands both brand and search intent."</p>
+          <div class="t-meta"><div class="t-avatar">HW</div><div><div class="t-name">Hannah Webb</div><div class="t-role">VP Marketing, Basalt Apparel</div></div></div>
+        </article>
+        <!-- Duplicate -->
+        <article class="t-card" aria-hidden="true">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"A tiny team that punches like an agency three times its size. The mockups alone sold our board on the rebrand."</p>
+          <div class="t-meta"><div class="t-avatar">SM</div><div><div class="t-name">Sofia Marín</div><div class="t-role">Director, Atrium Studio</div></div></div>
+        </article>
+        <article class="t-card" aria-hidden="true">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Our subscription flow went from leaky to airtight. Revenue per visitor is up, and we finally look like the brand we wanted to be."</p>
+          <div class="t-meta"><div class="t-avatar">LT</div><div><div class="t-name">Leo Tanaka</div><div class="t-role">Owner, Kōki Coffee Roasters</div></div></div>
+        </article>
+        <article class="t-card" aria-hidden="true">
+          <div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></div>
+          <p class="t-quote">"Organic traffic tripled in 8 months. They are the only agency we've used that genuinely understands both brand and search intent."</p>
+          <div class="t-meta"><div class="t-avatar">HW</div><div><div class="t-name">Hannah Webb</div><div class="t-role">VP Marketing, Basalt Apparel</div></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Contact</span>
+        <h2>Tell us about your mission.</h2>
+        <p>One form. One conversation. We reply within a business day.</p>
+      </div>
+
+      <div class="contact-wrap reveal">
+        <!-- Replace YOUR_FORM_ID with your Formspree endpoint (https://formspree.io) -->
+        <form id="contact-form" class="contact-form" action="https://formspree.io/f/meevlgjn" method="POST" novalidate>
+          <div class="field" data-field="name">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+            <div class="error-msg" aria-live="polite"></div>
+          </div>
+          <div class="field" data-field="email">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+            <div class="error-msg" aria-live="polite"></div>
+          </div>
+          <div class="field" data-field="message">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+            <div class="error-msg" aria-live="polite"></div>
+          </div>
+          <!-- Honeypot for bots, do not remove -->
+          <div class="honeypot" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="form-status" role="status" aria-live="polite"></div>
+          <button type="submit" class="btn btn-primary btn-submit">Send message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <img src="/nbLogo.png" alt="NoBound" />
+      </div>
+      <div class="footer-center">2026 NoBound.Design</div>
+      <div class="footer-right"><a href="mailto:info@nobound.design">info@nobound.design</a></div>
+    </div>
+  </footer>
+
+  <script src="/marketing-script.js" defer></script>
+</body>
+</html>
