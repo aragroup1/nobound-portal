@@ -14,9 +14,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { formatDate, formatDateTime, formatGBP } from "@/lib/format";
-import { ExternalLink, Plus, CreditCard } from "lucide-react";
+import { ExternalLink, Plus, CreditCard, ArrowRight } from "lucide-react";
 import type { Client, Ticket } from "@/lib/db/types";
-import { openBillingPortal } from "./actions";
+import { openBillingPortal, startSubscription } from "./actions";
 
 export default async function PortalHome() {
   const { supabase, user } = await requireClient();
@@ -56,15 +56,44 @@ export default async function PortalHome() {
         description={c.business_name ?? undefined}
       />
 
-      {!subscriptionActive && c.subscription_status !== "active" && (
-        <Card className="mb-8 border-amber-500/30 bg-amber-500/5">
-          <CardContent className="pt-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+      {!subscriptionActive && (
+        <Card className="mb-8 border-primary/30 bg-primary/5">
+          <CardContent className="pt-6 space-y-5">
             <div>
-              <div className="font-medium">Finish setting up your subscription</div>
-              <div className="text-sm text-muted-foreground">
-                Your card hasn&apos;t been captured yet. Check your inbox for the welcome email, or contact us if you need a new link.
+              <div className="font-heading text-xl font-semibold">Start your subscription</div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Activate your plan to keep your website live and your change requests flowing.
+                You&apos;ll enter your card once and be billed monthly — cancel anytime.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-3">
+              {c.has_hosting && (
+                <div className="rounded-lg border border-border bg-card/60 p-4">
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Hosting</div>
+                  <div className="font-heading text-2xl font-semibold mt-1">£10<span className="text-sm text-muted-foreground font-normal">/mo</span></div>
+                </div>
+              )}
+              {c.has_seo && (
+                <div className="rounded-lg border border-border bg-card/60 p-4">
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">SEO</div>
+                  <div className="font-heading text-2xl font-semibold mt-1">£100<span className="text-sm text-muted-foreground font-normal">/mo</span></div>
+                </div>
+              )}
+              <div className="rounded-lg border border-primary/40 bg-primary/10 p-4">
+                <div className="text-xs uppercase tracking-wider text-primary/80">Total today</div>
+                <div className="font-heading text-2xl font-semibold mt-1">{formatGBP(monthly)}<span className="text-sm text-muted-foreground font-normal">/mo</span></div>
               </div>
             </div>
+
+            <form action={startSubscription}>
+              <Button type="submit" size="lg" className="w-full sm:w-auto">
+                Continue to secure checkout <ArrowRight className="h-4 w-4" />
+              </Button>
+            </form>
+            <p className="text-xs text-muted-foreground">
+              Payment is processed by Stripe. You&apos;ll see the exact amount and any discounts on the next screen before paying.
+            </p>
           </CardContent>
         </Card>
       )}
@@ -114,14 +143,27 @@ export default async function PortalHome() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Billing</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={openBillingPortal}>
-              <Button type="submit" variant="secondary" className="w-full" disabled={!c.stripe_customer_id}>
-                <CreditCard className="h-4 w-4" /> Manage payment & invoices
-              </Button>
-            </form>
-            <p className="text-xs text-muted-foreground mt-3">
-              Update your card, view invoices, or cancel — all handled securely by Stripe.
-            </p>
+            {subscriptionActive ? (
+              <>
+                <form action={openBillingPortal}>
+                  <Button
+                    type="submit"
+                    variant="secondary"
+                    className="w-full"
+                    disabled={!c.stripe_customer_id}
+                  >
+                    <CreditCard className="h-4 w-4" /> Manage payment &amp; invoices
+                  </Button>
+                </form>
+                <p className="text-xs text-muted-foreground mt-3">
+                  Update your card, view invoices, or cancel — all handled securely by Stripe.
+                </p>
+              </>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Billing tools appear here once your subscription is active.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
