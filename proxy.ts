@@ -27,7 +27,7 @@ export async function proxy(request: NextRequest) {
       url.pathname = "/admin";
       return NextResponse.redirect(url);
     }
-    if (pathname === "/login") {
+    if (pathname === "/" || pathname === "/login") {
       const url = request.nextUrl.clone();
       url.pathname = role === "admin" ? "/admin" : "/portal";
       return NextResponse.redirect(url);
