@@ -17,6 +17,7 @@ import { formatDate, formatDateTime, formatGBP } from "@/lib/format";
 import { ExternalLink, Plus, CreditCard, ArrowRight } from "lucide-react";
 import type { Client, Ticket } from "@/lib/db/types";
 import { openBillingPortal, startSubscription } from "./actions";
+import { SeoUpsell } from "./seo-upsell";
 
 export default async function PortalHome() {
   const { supabase, user } = await requireClient();
@@ -97,6 +98,8 @@ export default async function PortalHome() {
           </CardContent>
         </Card>
       )}
+
+      {subscriptionActive && !c.has_seo && <SeoUpsell />}
 
       <div className="grid lg:grid-cols-3 gap-6 mb-10">
         <Card>

@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation";
 import { requireClient } from "@/lib/auth";
 import { stripe, appUrl, STRIPE_PRICE_HOSTING, STRIPE_PRICE_SEO } from "@/lib/stripe";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { sendEmail, ADMIN_EMAIL } from "@/lib/email";
+import { SeoInterestEmail } from "@/emails/seo-interest";
 
 export async function openBillingPortal() {
   const { supabase, user } = await requireClient();
@@ -17,6 +20,41 @@ export async function openBillingPortal() {
     return_url: appUrl("/portal"),
   });
   redirect(session.url);
+}
+
+export async function requestSeoUpgrade(): Promise<{ ok: boolean; message?: string }> {
+  const { supabase, user } = await requireClient();
+  const { data: client } = await supabase
+    .from("clients")
+    .select("id, name, email, business_name, website_url, has_seo")
+    .eq("profile_id", user.id)
+    .single();
+  if (!client) return { ok: false, message: "Client record missing." };
+  if (client.has_seo) return { ok: false, message: "SEO is already on your plan." };
+
+  const admin = createSupabaseAdminClient();
+  await admin
+    .from("clients")
+    .update({ notes: `[${new Date().toISOString().slice(0, 10)}] SEO interest from portal` })
+    .eq("id", client.id);
+
+  try {
+    await sendEmail({
+      to: ADMIN_EMAIL,
+      subject: `SEO interest: ${client.name} (${client.business_name ?? client.email})`,
+      react: SeoInterestEmail({
+        clientName: client.name,
+        businessName: client.business_name,
+        email: client.email,
+        websiteUrl: client.website_url,
+        clientAdminUrl: appUrl(`/admin/clients/${client.id}`),
+      }),
+    });
+  } catch (err) {
+    console.error("SEO interest notify failed:", err);
+  }
+
+  return { ok: true };
 }
 
 export async function startSubscription() {
