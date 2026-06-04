@@ -24,6 +24,8 @@ import {
 import { formatDate, formatDateTime, formatGBP } from "@/lib/format";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import type { Client, Ticket, Invoice } from "@/lib/db/types";
+import { DeleteClientButton } from "./delete-client-button";
+import { PaymentLinkButton } from "./payment-link-button";
 
 export default async function ClientDetailPage({
   params,
@@ -58,9 +60,12 @@ export default async function ClientDetailPage({
         title={c.name}
         description={c.business_name ?? c.email}
         action={
-          <LinkButton href="/admin/clients" variant="ghost">
-            <ArrowLeft className="h-4 w-4" /> All clients
-          </LinkButton>
+          <>
+            <LinkButton href="/admin/clients" variant="ghost">
+              <ArrowLeft className="h-4 w-4" /> All clients
+            </LinkButton>
+            <DeleteClientButton clientId={c.id} clientName={c.name} />
+          </>
         }
       />
 
@@ -116,6 +121,22 @@ export default async function ClientDetailPage({
           </CardContent>
         </Card>
       </div>
+
+      {c.subscription_status !== "active" && c.subscription_status !== "trialing" && (
+        <Card className="mb-10 border-amber-500/30 bg-amber-500/5">
+          <CardHeader>
+            <CardTitle className="text-base">Payment not set up yet</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Generate a one-time Stripe Checkout link and send it to the client (WhatsApp,
+              SMS, your own email — whatever they&apos;ll respond to). Once they pay, the
+              webhook will mark their subscription active automatically.
+            </p>
+            <PaymentLinkButton clientId={c.id} />
+          </CardContent>
+        </Card>
+      )}
 
       <section className="mb-10">
         <h2 className="font-heading text-xl font-semibold mb-4">Tickets</h2>
