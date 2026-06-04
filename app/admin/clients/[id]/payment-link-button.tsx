@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Link2, Copy, ExternalLink, Check } from "lucide-react";
@@ -50,11 +50,14 @@ export function PaymentLinkButton({ clientId }: { clientId: string }) {
         <Button onClick={handleCopy} variant="secondary" size="sm">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
         </Button>
-        <Button asChild variant="secondary" size="sm">
-          <a href={link} target="_blank" rel="noopener noreferrer">
-            <ExternalLink className="h-4 w-4" />
-          </a>
-        </Button>
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={buttonVariants({ variant: "secondary", size: "sm" })}
+        >
+          <ExternalLink className="h-4 w-4" />
+        </a>
       </div>
       <p className="text-xs text-muted-foreground">
         Send this link to the client via WhatsApp / email / wherever. Single-use; if they
