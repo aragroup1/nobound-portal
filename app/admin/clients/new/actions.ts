@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { stripe, STRIPE_PRICE_HOSTING, STRIPE_PRICE_SEO, appUrl } from "@/lib/stripe";
+import { stripe, STRIPE_PRICE_HOSTING, STRIPE_PRICE_SEO, appUrl, PUBLIC_LOGIN_URL } from "@/lib/stripe";
 import { sendEmail } from "@/lib/email";
 import { ClientWelcomeEmail } from "@/emails/client-welcome";
 
@@ -145,7 +145,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
       react: ClientWelcomeEmail({
         name: data.name,
         checkoutUrl: session.url!,
-        loginUrl: appUrl("/login"),
+        loginUrl: PUBLIC_LOGIN_URL,
         hosting: data.has_hosting,
         seo: data.has_seo,
       }),
@@ -161,7 +161,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
       clientId: clientRow.id,
       password,
       checkoutUrl: session.url!,
-      loginUrl: appUrl("/login"),
+      loginUrl: PUBLIC_LOGIN_URL,
     },
   };
 }
