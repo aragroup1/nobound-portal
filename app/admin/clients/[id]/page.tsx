@@ -26,6 +26,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import type { Client, Ticket, Invoice } from "@/lib/db/types";
 import { DeleteClientButton } from "./delete-client-button";
 import { PaymentLinkButton } from "./payment-link-button";
+import { ResetPasswordButton } from "./reset-password-button";
 
 export default async function ClientDetailPage({
   params,
@@ -118,6 +119,9 @@ export default async function ClientDetailPage({
             <div>Status: <span className="text-foreground">{c.status}</span></div>
             <div className="text-muted-foreground">Started {formatDate(c.started_at)}</div>
             <div className="text-muted-foreground">Created {formatDate(c.created_at)}</div>
+            <div className="pt-3">
+              <ResetPasswordButton clientId={c.id} />
+            </div>
           </CardContent>
         </Card>
       </div>

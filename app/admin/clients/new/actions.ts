@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
@@ -18,13 +17,27 @@ const schema = z.object({
   has_seo: z.boolean(),
   started_at: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
+  password: z.string().optional().nullable(),
 });
 
 export type OnboardState = {
   ok: boolean;
   message?: string;
   fieldErrors?: Record<string, string>;
+  result?: {
+    clientId: string;
+    password: string;
+    checkoutUrl: string;
+    loginUrl: string;
+  };
 };
+
+function generatePassword(length = 14) {
+  const charset = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%&*";
+  const arr = new Uint8Array(length);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, (n) => charset[n % charset.length]).join("");
+}
 
 export async function onboardClient(_prev: OnboardState, formData: FormData): Promise<OnboardState> {
   await requireAdmin();
@@ -38,6 +51,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
     has_seo: formData.get("has_seo") === "on",
     started_at: formData.get("started_at") || null,
     notes: formData.get("notes") || null,
+    password: (formData.get("password") as string) || null,
   });
 
   if (!parsed.success) {
@@ -55,9 +69,12 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
 
   const admin = createSupabaseAdminClient();
 
+  const password = (data.password && data.password.length >= 8) ? data.password : generatePassword();
+
   let userId: string;
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email: data.email,
+    password,
     email_confirm: true,
   });
 
@@ -67,6 +84,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
       const existing = list?.users.find((u) => u.email?.toLowerCase() === data.email.toLowerCase());
       if (!existing) return { ok: false, message: createErr.message };
       userId = existing.id;
+      await admin.auth.admin.updateUserById(userId, { password, email_confirm: true });
     } else {
       return { ok: false, message: createErr.message };
     }
@@ -137,5 +155,13 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
   }
 
   revalidatePath("/admin/clients");
-  redirect(`/admin/clients/${clientRow.id}?onboarded=1`);
+  return {
+    ok: true,
+    result: {
+      clientId: clientRow.id,
+      password,
+      checkoutUrl: session.url!,
+      loginUrl: appUrl("/login"),
+    },
+  };
 }

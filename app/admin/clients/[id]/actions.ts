@@ -9,6 +9,31 @@ import { stripe, STRIPE_PRICE_HOSTING, STRIPE_PRICE_SEO, appUrl } from "@/lib/st
 
 const schema = z.object({ clientId: z.string().uuid() });
 
+function generatePassword(length = 14) {
+  const charset = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%&*";
+  const arr = new Uint8Array(length);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, (n) => charset[n % charset.length]).join("");
+}
+
+export async function resetPassword(formData: FormData): Promise<string> {
+  await requireAdmin();
+  const { clientId } = schema.parse({ clientId: formData.get("clientId") });
+
+  const admin = createSupabaseAdminClient();
+  const { data: client } = await admin
+    .from("clients")
+    .select("profile_id")
+    .eq("id", clientId)
+    .single();
+  if (!client?.profile_id) throw new Error("No login account on this client.");
+
+  const password = generatePassword();
+  const { error } = await admin.auth.admin.updateUserById(client.profile_id, { password });
+  if (error) throw new Error(error.message);
+  return password;
+}
+
 export async function generatePaymentLink(formData: FormData): Promise<string> {
   await requireAdmin();
   const { clientId } = schema.parse({ clientId: formData.get("clientId") });
