@@ -17,9 +17,11 @@ import { deleteClient } from "./actions";
 export function DeleteClientButton({
   clientId,
   clientName,
+  compact = false,
 }: {
   clientId: string;
   clientName: string;
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -27,9 +29,21 @@ export function DeleteClientButton({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="destructive" size="sm">
-            <Trash2 className="h-4 w-4" /> Delete client
-          </Button>
+          compact ? (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={`Delete ${clientName}`}
+              title={`Delete ${clientName}`}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button variant="destructive" size="sm">
+              <Trash2 className="h-4 w-4" /> Delete client
+            </Button>
+          )
         }
       />
       <DialogContent>
