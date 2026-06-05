@@ -95,7 +95,6 @@ export default async function ClientsPage() {
                         href={c.website_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
                         className="text-xs text-primary/80 hover:text-primary inline-flex items-center gap-1 mt-0.5"
                       >
                         {c.website_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
