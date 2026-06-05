@@ -78,8 +78,29 @@ export default async function PortalTicketDetail({
               </div>
               <TicketStatusBadge status={t.status} />
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-5">
               <p className="whitespace-pre-wrap leading-relaxed">{t.description}</p>
+              {t.attachment_urls && t.attachment_urls.length > 0 && (
+                <div>
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                    Screenshots
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {t.attachment_urls.map((url) => (
+                      <a
+                        key={url}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-lg border border-border bg-card overflow-hidden aspect-video block hover:border-primary/50"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt="Attachment" className="w-full h-full object-cover" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

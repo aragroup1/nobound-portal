@@ -69,6 +69,7 @@ export interface Ticket {
   title: string;
   description: string;
   type: TicketType;
+  attachment_urls: string[];
   status: TicketStatus;
   price_pence: number | null;
   admin_notes: string | null;

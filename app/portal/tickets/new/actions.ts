@@ -12,6 +12,7 @@ const schema = z.object({
   title: z.string().min(3, "Add a short title.").max(120),
   description: z.string().min(10, "A little more detail, please."),
   type: z.enum(["modification", "emergency"]).default("modification"),
+  attachment_urls: z.array(z.string().url()).max(5).default([]),
 });
 
 export type RaiseState = { ok: boolean; message?: string; fieldErrors?: Record<string, string> };
@@ -22,6 +23,7 @@ export async function raiseTicket(_prev: RaiseState, formData: FormData): Promis
     title: formData.get("title"),
     description: formData.get("description"),
     type: formData.get("type") || "modification",
+    attachment_urls: formData.getAll("attachment_urls").map((v) => v.toString()),
   });
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -44,6 +46,7 @@ export async function raiseTicket(_prev: RaiseState, formData: FormData): Promis
       title: parsed.data.title,
       description: parsed.data.description,
       type: parsed.data.type,
+      attachment_urls: parsed.data.attachment_urls,
       status: "new",
     })
     .select("id")
