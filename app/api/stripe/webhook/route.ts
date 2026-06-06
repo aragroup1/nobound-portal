@@ -64,14 +64,34 @@ export async function POST(request: NextRequest) {
         const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
         const periodEnd =
           (sub as Stripe.Subscription & { current_period_end?: number }).current_period_end ?? null;
-        await admin
+
+        const { data: updatedClients, error: updateError } = await admin
           .from("clients")
           .update({
             stripe_subscription_id: sub.id,
             subscription_status: sub.status,
             current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
           })
-          .eq("stripe_customer_id", customerId);
+          .eq("stripe_customer_id", customerId)
+          .select("id");
+
+        if (updateError) {
+          console.error("Failed to update client subscription:", updateError);
+          return NextResponse.json({ error: "update_failed" }, { status: 500 });
+        }
+
+        if (!updatedClients || updatedClients.length === 0) {
+          console.error(
+            "Webhook: No client found with stripe_customer_id:",
+            customerId,
+            "for subscription:",
+            sub.id,
+            "status:",
+            sub.status
+          );
+          return NextResponse.json({ error: "client_not_found" }, { status: 404 });
+        }
+
         break;
       }
 
