@@ -65,7 +65,8 @@ export async function POST(request: NextRequest) {
         const periodEnd =
           (sub as Stripe.Subscription & { current_period_end?: number }).current_period_end ?? null;
 
-        const { data: updatedClients, error: updateError } = await admin
+        // Try to match by stripe_customer_id first
+        let { data: updatedClients, error: updateError } = await admin
           .from("clients")
           .update({
             stripe_subscription_id: sub.id,
@@ -74,6 +75,28 @@ export async function POST(request: NextRequest) {
           })
           .eq("stripe_customer_id", customerId)
           .select("id");
+
+        // Fallback: match by client_id from subscription metadata
+        if ((!updatedClients || updatedClients.length === 0) && sub.metadata?.client_id) {
+          console.warn(
+            "Webhook: No client found with stripe_customer_id:",
+            customerId,
+            "— trying metadata client_id:",
+            sub.metadata.client_id
+          );
+          const fallback = await admin
+            .from("clients")
+            .update({
+              stripe_subscription_id: sub.id,
+              stripe_customer_id: customerId,
+              subscription_status: sub.status,
+              current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+            })
+            .eq("id", sub.metadata.client_id)
+            .select("id");
+          updatedClients = fallback.data;
+          updateError = fallback.error;
+        }
 
         if (updateError) {
           console.error("Failed to update client subscription:", updateError);
@@ -84,6 +107,8 @@ export async function POST(request: NextRequest) {
           console.error(
             "Webhook: No client found with stripe_customer_id:",
             customerId,
+            "or metadata client_id:",
+            sub.metadata?.client_id,
             "for subscription:",
             sub.id,
             "status:",
