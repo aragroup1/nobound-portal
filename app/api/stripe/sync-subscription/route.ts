@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
     const activeSub = subscriptions.data.find(
       (s) => s.status === "active" || s.status === "trialing"
-    );
+    ) as (typeof subscriptions.data[0] & { current_period_end?: number }) | undefined;
 
     if (!activeSub) {
       return NextResponse.json({
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
         stripe_subscriptions: subscriptions.data.map((s) => ({
           id: s.id,
           status: s.status,
-          current_period_end: s.current_period_end,
+          current_period_end: (s as typeof s & { current_period_end?: number }).current_period_end,
         })),
         message: "No active or trialing subscription found in Stripe",
       });
@@ -89,8 +89,8 @@ export async function POST(request: Request) {
       .update({
         stripe_subscription_id: activeSub.id,
         subscription_status: activeSub.status,
-        current_period_end: activeSub.current_period_end
-          ? new Date(activeSub.current_period_end * 1000).toISOString()
+        current_period_end: (activeSub as typeof activeSub & { current_period_end?: number }).current_period_end
+          ? new Date((activeSub as typeof activeSub & { current_period_end?: number }).current_period_end! * 1000).toISOString()
           : null,
       })
       .eq("id", client.id)
@@ -119,7 +119,7 @@ export async function POST(request: Request) {
       stripe_subscription: {
         id: activeSub.id,
         status: activeSub.status,
-        current_period_end: activeSub.current_period_end,
+        current_period_end: (activeSub as typeof activeSub & { current_period_end?: number }).current_period_end,
       },
     });
   } catch (stripeError) {
