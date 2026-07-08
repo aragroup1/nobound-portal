@@ -47,7 +47,9 @@ export default async function PortalHome() {
     .order("created_at", { ascending: false })
     .limit(5);
 
-  const monthly = (c.has_hosting ? 1000 : 0) + (c.has_seo ? 10000 : 0);
+  const monthly =
+    (c.has_hosting ? (c.hosting_price_pence ?? 1500) : 0) +
+    (c.has_seo ? 10000 : 0);
   const subscriptionActive = c.subscription_status === "active" || c.subscription_status === "trialing";
 
   return (
@@ -72,7 +74,7 @@ export default async function PortalHome() {
               {c.has_hosting && (
                 <div className="rounded-lg border border-border bg-card/60 p-4">
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">Hosting</div>
-                  <div className="font-heading text-2xl font-semibold mt-1">£10<span className="text-sm text-muted-foreground font-normal">/mo</span></div>
+                  <div className="font-heading text-2xl font-semibold mt-1">{formatGBP(c.hosting_price_pence ?? 1500)}<span className="text-sm text-muted-foreground font-normal">/mo</span></div>
                 </div>
               )}
               {c.has_seo && (
@@ -81,9 +83,15 @@ export default async function PortalHome() {
                   <div className="font-heading text-2xl font-semibold mt-1">£100<span className="text-sm text-muted-foreground font-normal">/mo</span></div>
                 </div>
               )}
+              {c.build_cost_pence ? (
+                <div className="rounded-lg border border-border bg-card/60 p-4">
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Build cost</div>
+                  <div className="font-heading text-2xl font-semibold mt-1">{formatGBP(c.build_cost_pence)}</div>
+                </div>
+              ) : null}
               <div className="rounded-lg border border-primary/40 bg-primary/10 p-4">
                 <div className="text-xs uppercase tracking-wider text-primary/80">Total today</div>
-                <div className="font-heading text-2xl font-semibold mt-1">{formatGBP(monthly)}<span className="text-sm text-muted-foreground font-normal">/mo</span></div>
+                <div className="font-heading text-2xl font-semibold mt-1">{formatGBP(monthly + (c.build_cost_pence ?? 0))}</div>
               </div>
             </div>
 

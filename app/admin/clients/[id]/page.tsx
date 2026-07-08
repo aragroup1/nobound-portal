@@ -27,6 +27,7 @@ import type { Client, Ticket, Invoice } from "@/lib/db/types";
 import { DeleteClientButton } from "./delete-client-button";
 import { PaymentLinkButton } from "./payment-link-button";
 import { ResetPasswordButton } from "./reset-password-button";
+import { SyncSubscriptionButton } from "./sync-subscription-button";
 
 export default async function ClientDetailPage({
   params,
@@ -53,7 +54,8 @@ export default async function ClientDetailPage({
   if (!client) notFound();
   const c = client as Client;
   const monthly =
-    (c.has_hosting ? 1000 : 0) + (c.has_seo ? 10000 : 0);
+    (c.has_hosting ? (c.hosting_price_pence ?? 1500) : 0) +
+    (c.has_seo ? 10000 : 0);
 
   return (
     <>
@@ -80,8 +82,16 @@ export default async function ClientDetailPage({
           <CardContent className="space-y-2">
             <SubscriptionStatusBadge status={c.subscription_status} />
             <div className="text-2xl font-heading font-semibold">{formatGBP(monthly)}/mo</div>
+            {c.build_cost_pence ? (
+              <div className="text-sm text-muted-foreground">
+                Build cost {formatGBP(c.build_cost_pence)} (one-off)
+              </div>
+            ) : null}
             <div className="text-xs text-muted-foreground">
               Next: {formatDate(c.current_period_end)}
+            </div>
+            <div className="pt-1">
+              <SyncSubscriptionButton clientId={c.id} />
             </div>
           </CardContent>
         </Card>

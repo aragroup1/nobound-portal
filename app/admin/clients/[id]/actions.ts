@@ -3,9 +3,10 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import type Stripe from "stripe";
 import { requireAdmin } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { stripe, STRIPE_PRICE_HOSTING, STRIPE_PRICE_SEO, appUrl } from "@/lib/stripe";
+import { stripe, STRIPE_PRICE_SEO, hostingLineItem, createBuildFeeInvoiceItem, appUrl } from "@/lib/stripe";
 
 const schema = z.object({ clientId: z.string().uuid() });
 
@@ -41,16 +42,31 @@ export async function generatePaymentLink(formData: FormData): Promise<string> {
   const admin = createSupabaseAdminClient();
   const { data: client } = await admin
     .from("clients")
-    .select("stripe_customer_id, has_hosting, has_seo")
+    .select("stripe_customer_id, has_hosting, has_seo, hosting_price_pence, build_cost_pence")
     .eq("id", clientId)
     .single();
 
   if (!client?.stripe_customer_id) throw new Error("No Stripe customer on this client.");
 
-  const lineItems: { price: string; quantity: number }[] = [];
-  if (client.has_hosting) lineItems.push({ price: STRIPE_PRICE_HOSTING, quantity: 1 });
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  if (client.has_hosting) lineItems.push(hostingLineItem(client.hosting_price_pence));
   if (client.has_seo) lineItems.push({ price: STRIPE_PRICE_SEO, quantity: 1 });
-  if (!lineItems.length) throw new Error("Client has no plan selected.");
+
+  // A subscription-mode Checkout requires at least one recurring line item, so we
+  // can only bill a build fee alongside hosting/SEO here. (A build-cost-only client
+  // would need a one-off payment link, which this admin flow doesn't create.)
+  if (!lineItems.length) {
+    throw new Error(
+      client.build_cost_pence
+        ? "Build-cost-only checkout isn't supported here — the client needs hosting or SEO too."
+        : "Client has no plan selected.",
+    );
+  }
+
+  // One-off build fee → pending invoice item on the first subscription invoice.
+  if (client.build_cost_pence && client.build_cost_pence > 0) {
+    await createBuildFeeInvoiceItem(client.stripe_customer_id, client.build_cost_pence);
+  }
 
   const onboardingCoupon = process.env.STRIPE_ONBOARDING_COUPON_ID;
   const session = await stripe.checkout.sessions.create({
@@ -66,6 +82,58 @@ export async function generatePaymentLink(formData: FormData): Promise<string> {
 
   if (!session.url) throw new Error("Stripe did not return a Checkout URL.");
   return session.url;
+}
+
+/**
+ * Pull the client's current subscription straight from Stripe and write it to
+ * their row. A recovery path for when a webhook was missed (e.g. the endpoint
+ * wasn't subscribed to customer.subscription.created). Returns a status message.
+ */
+export async function syncSubscription(formData: FormData): Promise<string> {
+  await requireAdmin();
+  const { clientId } = schema.parse({ clientId: formData.get("clientId") });
+
+  const admin = createSupabaseAdminClient();
+  const { data: client } = await admin
+    .from("clients")
+    .select("id, stripe_customer_id")
+    .eq("id", clientId)
+    .single();
+
+  if (!client) throw new Error("Client not found.");
+  if (!client.stripe_customer_id) throw new Error("No Stripe customer on this client.");
+
+  const subscriptions = await stripe.subscriptions.list({
+    customer: client.stripe_customer_id,
+    status: "all",
+    limit: 10,
+  });
+
+  const activeSub = subscriptions.data.find(
+    (s) => s.status === "active" || s.status === "trialing",
+  ) as (Stripe.Subscription & { current_period_end?: number }) | undefined;
+
+  if (!activeSub) {
+    throw new Error(
+      `No active subscription found in Stripe (${subscriptions.data.length} subscription(s) total).`,
+    );
+  }
+
+  const { error } = await admin
+    .from("clients")
+    .update({
+      stripe_subscription_id: activeSub.id,
+      subscription_status: activeSub.status,
+      current_period_end: activeSub.current_period_end
+        ? new Date(activeSub.current_period_end * 1000).toISOString()
+        : null,
+    })
+    .eq("id", client.id);
+
+  if (error) throw new Error(`Failed to update client: ${error.message}`);
+
+  revalidatePath(`/admin/clients/${client.id}`);
+  return `Synced — subscription is ${activeSub.status}.`;
 }
 
 export async function deleteClient(formData: FormData) {

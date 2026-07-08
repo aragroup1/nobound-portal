@@ -20,6 +20,8 @@ create table if not exists clients (
   website_url text,
   has_hosting boolean not null default false,
   has_seo boolean not null default false,
+  hosting_price_pence integer default 1500,
+  build_cost_pence integer,
   status text not null default 'active' check (status in ('active', 'paused', 'cancelled')),
   notes text,
   started_at date,

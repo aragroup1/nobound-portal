@@ -21,7 +21,7 @@ type ClientWithTickets = Client & {
 };
 
 function monthlyTotal(c: ClientWithTickets) {
-  return (c.has_hosting ? 1000 : 0) + (c.has_seo ? 10000 : 0);
+  return (c.has_hosting ? (c.hosting_price_pence ?? 1500) : 0) + (c.has_seo ? 10000 : 0);
 }
 
 const OPEN_TICKET_STATUSES = ["new", "priced", "awaiting_payment", "paid", "in_progress"];
@@ -103,9 +103,16 @@ export default async function ClientsPage() {
                     )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground align-top py-3">
-                    {[c.has_hosting && "Hosting", c.has_seo && "SEO"]
-                      .filter(Boolean)
-                      .join(" + ") || "—"}
+                    <div>
+                      {[c.has_hosting && "Hosting", c.has_seo && "SEO"]
+                        .filter(Boolean)
+                        .join(" + ") || "—"}
+                    </div>
+                    {c.build_cost_pence ? (
+                      <div className="text-xs text-foreground mt-0.5">
+                        Build {formatGBP(c.build_cost_pence)}
+                      </div>
+                    ) : null}
                   </TableCell>
                   <TableCell className="font-mono text-sm align-top py-3">
                     {formatGBP(monthlyTotal(c))}

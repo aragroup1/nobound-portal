@@ -38,6 +38,8 @@ export interface Client {
   website_url: string | null;
   has_hosting: boolean;
   has_seo: boolean;
+  hosting_price_pence: number | null;
+  build_cost_pence: number | null;
   status: ClientStatus;
   notes: string | null;
   started_at: string | null;

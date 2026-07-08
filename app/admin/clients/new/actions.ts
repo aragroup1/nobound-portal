@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import type Stripe from "stripe";
 import { requireAdmin } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { stripe, STRIPE_PRICE_HOSTING, STRIPE_PRICE_SEO, appUrl, PUBLIC_LOGIN_URL } from "@/lib/stripe";
+import { stripe, STRIPE_PRICE_SEO, HOSTING_PRICE_PENCE, hostingLineItem, createBuildFeeInvoiceItem, appUrl, PUBLIC_LOGIN_URL } from "@/lib/stripe";
 import { sendEmail } from "@/lib/email";
 import { ClientWelcomeEmail } from "@/emails/client-welcome";
 
@@ -15,6 +16,7 @@ const schema = z.object({
   website_url: z.string().url().optional().or(z.literal("")).nullable(),
   has_hosting: z.boolean(),
   has_seo: z.boolean(),
+  build_cost_pence: z.number().int().min(0).nullable(),
   started_at: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   password: z.string().optional().nullable(),
@@ -42,6 +44,11 @@ function generatePassword(length = 14) {
 export async function onboardClient(_prev: OnboardState, formData: FormData): Promise<OnboardState> {
   await requireAdmin();
 
+  const buildCostRaw = formData.get("build_cost") as string;
+  const buildCostPence = buildCostRaw
+    ? Math.round(parseFloat(buildCostRaw) * 100)
+    : null;
+
   const parsed = schema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -49,6 +56,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
     website_url: formData.get("website_url") || null,
     has_hosting: formData.get("has_hosting") === "on",
     has_seo: formData.get("has_seo") === "on",
+    build_cost_pence: buildCostPence && !isNaN(buildCostPence) && buildCostPence > 0 ? buildCostPence : null,
     started_at: formData.get("started_at") || null,
     notes: formData.get("notes") || null,
     password: (formData.get("password") as string) || null,
@@ -110,6 +118,8 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
       website_url: data.website_url || null,
       has_hosting: data.has_hosting,
       has_seo: data.has_seo,
+      hosting_price_pence: HOSTING_PRICE_PENCE,
+      build_cost_pence: data.build_cost_pence,
       started_at: data.started_at || new Date().toISOString().slice(0, 10),
       notes: data.notes,
       stripe_customer_id: customer.id,
@@ -122,9 +132,16 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
 
   await stripe.customers.update(customer.id, { metadata: { client_id: clientRow.id } });
 
-  const lineItems: { price: string; quantity: number }[] = [];
-  if (data.has_hosting) lineItems.push({ price: STRIPE_PRICE_HOSTING, quantity: 1 });
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  if (data.has_hosting) lineItems.push(hostingLineItem(HOSTING_PRICE_PENCE));
   if (data.has_seo) lineItems.push({ price: STRIPE_PRICE_SEO, quantity: 1 });
+
+  // One-off build fee: attach as a pending invoice item on the customer so Stripe
+  // folds it into the FIRST subscription invoice only. It must NOT be a recurring
+  // subscription line item, or the client would be charged the build cost every month.
+  if (data.build_cost_pence && data.build_cost_pence > 0) {
+    await createBuildFeeInvoiceItem(customer.id, data.build_cost_pence);
+  }
 
   const onboardingCoupon = process.env.STRIPE_ONBOARDING_COUPON_ID;
   const session = await stripe.checkout.sessions.create({
@@ -148,6 +165,7 @@ export async function onboardClient(_prev: OnboardState, formData: FormData): Pr
         loginUrl: PUBLIC_LOGIN_URL,
         hosting: data.has_hosting,
         seo: data.has_seo,
+        buildCostPence: data.build_cost_pence,
       }),
     });
   } catch (err) {

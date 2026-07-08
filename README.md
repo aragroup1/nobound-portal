@@ -28,7 +28,7 @@ Admin + client portal for NoBound.Design.
 
 1. Create a UK Stripe account; stay in **test mode**.
 2. Create 2 Products with monthly GBP recurring Prices:
-   - **NoBound Hosting** — £10.00/mo → copy `price_xxx` → `STRIPE_PRICE_HOSTING`
+   - **NoBound Hosting** — £15.00/mo → copy `price_xxx` → `STRIPE_PRICE_HOSTING`
    - **NoBound SEO** — £100.00/mo → copy `price_xxx` → `STRIPE_PRICE_SEO`
 3. **Developers → API keys**: copy `pk_test_...` → `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `sk_test_...` → `STRIPE_SECRET_KEY`.
 4. **Settings → Billing → Customer Portal**: enable, allow card updates + cancellations.

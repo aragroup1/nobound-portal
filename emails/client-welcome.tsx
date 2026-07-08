@@ -7,14 +7,19 @@ export function ClientWelcomeEmail({
   loginUrl,
   hosting,
   seo,
+  buildCostPence,
 }: {
   name: string;
   checkoutUrl: string;
   loginUrl: string;
   hosting: boolean;
   seo: boolean;
+  buildCostPence?: number | null;
 }) {
-  const plan = [hosting && "Hosting (£10/mo)", seo && "SEO (£100/mo)"].filter(Boolean).join(" + ");
+  const plan = [hosting && "Hosting (£15/mo)", seo && "SEO (£100/mo)"].filter(Boolean).join(" + ");
+  const buildCostFormatted = buildCostPence
+    ? new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(buildCostPence / 100)
+    : null;
   return (
     <EmailLayout preview={`Welcome to NoBound — finish setting up your account`}>
       <Text style={styles.h1}>Welcome, {name.split(" ")[0]}.</Text>
@@ -24,6 +29,11 @@ export function ClientWelcomeEmail({
       <div style={styles.panel}>
         <Text style={{ ...styles.muted, margin: 0 }}>Your plan</Text>
         <Text style={{ ...styles.p, fontWeight: 600, margin: "4px 0 0" }}>{plan}</Text>
+        {buildCostFormatted && (
+          <Text style={{ ...styles.p, fontWeight: 600, margin: "4px 0 0" }}>
+            Build cost: {buildCostFormatted} (one-off)
+          </Text>
+        )}
       </div>
       <Button href={checkoutUrl} style={styles.button}>Set up payment</Button>
       <Text style={{ ...styles.muted, marginTop: 20 }}>

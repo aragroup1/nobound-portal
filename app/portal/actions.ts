@@ -1,8 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import type Stripe from "stripe";
 import { requireClient } from "@/lib/auth";
-import { stripe, appUrl, STRIPE_PRICE_HOSTING, STRIPE_PRICE_SEO } from "@/lib/stripe";
+import { stripe, appUrl, STRIPE_PRICE_SEO, hostingLineItem, createBuildFeeInvoiceItem } from "@/lib/stripe";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { sendEmail, ADMIN_EMAIL } from "@/lib/email";
 import { SeoInterestEmail } from "@/emails/seo-interest";
@@ -61,15 +62,22 @@ export async function startSubscription() {
   const { supabase, user } = await requireClient();
   const { data: client } = await supabase
     .from("clients")
-    .select("id, stripe_customer_id, has_hosting, has_seo")
+    .select("id, stripe_customer_id, has_hosting, has_seo, hosting_price_pence, build_cost_pence")
     .eq("profile_id", user.id)
     .single();
   if (!client?.stripe_customer_id) throw new Error("No Stripe customer on file.");
 
-  const lineItems: { price: string; quantity: number }[] = [];
-  if (client.has_hosting) lineItems.push({ price: STRIPE_PRICE_HOSTING, quantity: 1 });
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  if (client.has_hosting) lineItems.push(hostingLineItem(client.hosting_price_pence));
   if (client.has_seo) lineItems.push({ price: STRIPE_PRICE_SEO, quantity: 1 });
+
   if (!lineItems.length) throw new Error("No plan selected on your account. Contact us.");
+
+  // One-off build fee → pending invoice item, folded into the first subscription
+  // invoice (see createBuildFeeInvoiceItem). Never a recurring line item.
+  if (client.build_cost_pence && client.build_cost_pence > 0) {
+    await createBuildFeeInvoiceItem(client.stripe_customer_id, client.build_cost_pence);
+  }
 
   const onboardingCoupon = process.env.STRIPE_ONBOARDING_COUPON_ID;
   const session = await stripe.checkout.sessions.create({

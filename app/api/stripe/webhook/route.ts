@@ -98,6 +98,34 @@ export async function POST(request: NextRequest) {
           updateError = fallback.error;
         }
 
+        // Final fallback: match by the customer's email and adopt their Stripe
+        // customer id. Covers cases where the row's stripe_customer_id drifted
+        // from the customer that actually paid.
+        if (!updatedClients || updatedClients.length === 0) {
+          const customer = await stripe.customers.retrieve(customerId);
+          const email = "deleted" in customer ? null : customer.email;
+          if (email) {
+            console.warn(
+              "Webhook: falling back to email match for subscription:",
+              sub.id,
+              "email:",
+              email
+            );
+            const byEmail = await admin
+              .from("clients")
+              .update({
+                stripe_subscription_id: sub.id,
+                stripe_customer_id: customerId,
+                subscription_status: sub.status,
+                current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+              })
+              .eq("email", email)
+              .select("id");
+            updatedClients = byEmail.data;
+            updateError = byEmail.error;
+          }
+        }
+
         if (updateError) {
           console.error("Failed to update client subscription:", updateError);
           return NextResponse.json({ error: "update_failed" }, { status: 500 });
@@ -122,33 +150,21 @@ export async function POST(request: NextRequest) {
 
       case "invoice.paid": {
         const invoice = event.data.object as Stripe.Invoice;
-        const customerId =
-          typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
-        if (!customerId) break;
-        const { data: client } = await admin
-          .from("clients")
-          .select("id")
-          .eq("stripe_customer_id", customerId)
-          .single();
-        if (!client) break;
-        const lineFirst = invoice.lines?.data?.[0];
-        const period = lineFirst?.period;
-        await admin.from("invoices").upsert(
-          {
-            client_id: client.id,
-            stripe_invoice_id: invoice.id!,
-            amount_pence: invoice.amount_paid ?? invoice.total ?? 0,
-            status: invoice.status ?? "paid",
-            invoice_pdf_url: invoice.invoice_pdf ?? null,
-            hosted_invoice_url: invoice.hosted_invoice_url ?? null,
-            period_start: period?.start ? new Date(period.start * 1000).toISOString() : null,
-            period_end: period?.end ? new Date(period.end * 1000).toISOString() : null,
-            paid_at: invoice.status_transitions?.paid_at
-              ? new Date(invoice.status_transitions.paid_at * 1000).toISOString()
-              : new Date().toISOString(),
-          },
-          { onConflict: "stripe_invoice_id" },
-        );
+        await recordInvoice(admin, invoice);
+        break;
+      }
+
+      // `invoice_payment.paid` is a distinct, newer event carrying an
+      // InvoicePayment (not an Invoice). It only holds the invoice id, so we
+      // retrieve the full invoice and record it through the same path. Handling
+      // both means payment history lands regardless of which event Stripe sends.
+      case "invoice_payment.paid": {
+        const payment = event.data.object as Stripe.InvoicePayment;
+        const invoiceId =
+          typeof payment.invoice === "string" ? payment.invoice : payment.invoice?.id;
+        if (!invoiceId) break;
+        const invoice = await stripe.invoices.retrieve(invoiceId);
+        await recordInvoice(admin, invoice);
         break;
       }
 
@@ -171,4 +187,43 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({ received: true });
+}
+
+/**
+ * Upsert a paid Stripe invoice into the `invoices` table, keyed by
+ * stripe_invoice_id. Shared by the `invoice.paid` and `invoice_payment.paid`
+ * handlers. No-ops if the invoice has no matching client.
+ */
+async function recordInvoice(
+  admin: ReturnType<typeof createSupabaseAdminClient>,
+  invoice: Stripe.Invoice,
+) {
+  const customerId =
+    typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
+  if (!customerId || !invoice.id) return;
+
+  const { data: client } = await admin
+    .from("clients")
+    .select("id")
+    .eq("stripe_customer_id", customerId)
+    .single();
+  if (!client) return;
+
+  const period = invoice.lines?.data?.[0]?.period;
+  await admin.from("invoices").upsert(
+    {
+      client_id: client.id,
+      stripe_invoice_id: invoice.id,
+      amount_pence: invoice.amount_paid ?? invoice.total ?? 0,
+      status: invoice.status ?? "paid",
+      invoice_pdf_url: invoice.invoice_pdf ?? null,
+      hosted_invoice_url: invoice.hosted_invoice_url ?? null,
+      period_start: period?.start ? new Date(period.start * 1000).toISOString() : null,
+      period_end: period?.end ? new Date(period.end * 1000).toISOString() : null,
+      paid_at: invoice.status_transitions?.paid_at
+        ? new Date(invoice.status_transitions.paid_at * 1000).toISOString()
+        : new Date().toISOString(),
+    },
+    { onConflict: "stripe_invoice_id" },
+  );
 }

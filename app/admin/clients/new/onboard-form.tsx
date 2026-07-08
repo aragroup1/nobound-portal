@@ -16,6 +16,8 @@ const initial: OnboardState = { ok: false };
 
 export function OnboardForm() {
   const [state, action, pending] = useActionState(onboardClient, initial);
+  const [hasHosting, setHasHosting] = useState(false);
+  const [hasSeo, setHasSeo] = useState(false);
 
   useEffect(() => {
     if (state.message && !state.ok) toast.error(state.message);
@@ -27,6 +29,8 @@ export function OnboardForm() {
 
   return (
     <form action={action} className="space-y-6">
+      <input type="hidden" name="has_hosting" value={hasHosting ? "on" : "off"} />
+      <input type="hidden" name="has_seo" value={hasSeo ? "on" : "off"} />
       <Field label="Full name" name="name" required error={state.fieldErrors?.name} />
       <Field label="Email" name="email" type="email" required error={state.fieldErrors?.email} />
       <Field label="Business name" name="business_name" placeholder="Optional" />
@@ -40,8 +44,33 @@ export function OnboardForm() {
 
       <div className="rounded-xl border border-border bg-card p-5 space-y-4">
         <div className="text-sm font-medium">Plan</div>
-        <PlanToggle name="has_hosting" label="Hosting" price="£10 / month" />
-        <PlanToggle name="has_seo" label="SEO" price="£100 / month" />
+        <PlanToggle
+          label="Hosting"
+          price="£15 / month"
+          checked={hasHosting}
+          onCheckedChange={setHasHosting}
+        />
+        <PlanToggle
+          label="SEO"
+          price="£100 / month"
+          checked={hasSeo}
+          onCheckedChange={setHasSeo}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="build_cost">Build cost</Label>
+        <Input
+          id="build_cost"
+          name="build_cost"
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="e.g. 199"
+        />
+        <p className="text-xs text-muted-foreground">
+          One-off build fee in pounds. Added to the first checkout. Leave blank if there is no build cost.
+        </p>
       </div>
 
       <Field label="Start date" name="started_at" type="date" />
@@ -175,14 +204,24 @@ function Field({
   );
 }
 
-function PlanToggle({ name, label, price }: { name: string; label: string; price: string }) {
+function PlanToggle({
+  label,
+  price,
+  checked,
+  onCheckedChange,
+}: {
+  label: string;
+  price: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}) {
   return (
-    <label htmlFor={name} className="flex items-center justify-between gap-4 cursor-pointer">
+    <label className="flex items-center justify-between gap-4 cursor-pointer">
       <div>
         <div className="font-medium">{label}</div>
         <div className="text-xs text-muted-foreground">{price}</div>
       </div>
-      <Switch id={name} name={name} />
+      <Switch checked={checked} onCheckedChange={onCheckedChange} />
     </label>
   );
 }
